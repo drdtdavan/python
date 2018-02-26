@@ -22,8 +22,9 @@ def getName(item):
     arr=cur.fetchone()   
     item.MN=arr[0]
 
-def printSameStock(SSList):
-    A=3
+def getSameNC(same):
+    cur.execute("select NC from stock where SAME="+same)
+    return cur.fetchall()
 
 
  
@@ -38,13 +39,24 @@ cur.execute("select NC,SAME,STDATE,STOCKQ from STOCK ORDER BY SAME")
 
 # Retrieve all rows as a sequence and print that sequence:
 arr=cur.fetchall()
-i=-1
+
 siList=[]
 samesiList=[]
 zeroList=[]
-num=len(arr)
-m = sum(1 for i in arr if i[1]==0)
-print(m)
+
+for i in arr:
+    samesiList.append(i[1])
+
+s=set(samesiList)
+
+print(s)
+
+for i in s:
+    l=getSameNC(i)
+    for 
+
+
+
 
 
 
