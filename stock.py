@@ -22,17 +22,26 @@ def getName(item):
     arr=cur.fetchone()   
     item.MN=arr[0]
 
-def getSameNC(same):
-    cur.execute("select NC from stock where SAME="+str(same))
-    return cur.fetchall()
+def getSame(siL,s):
+    ls=(i for i in siL if i[1]==s)
+    soh=sum(i.SOH for i in ls)   
+    print("TOTAL QUANTITY = "+str(soh)+ " TOTAL PRICE = " +str(soh*ls[0].UP))
+    for i in ls:
+        print(i.MN+"\t"+i.SOH)    
+    print("_____________________")
 
+    
 def getUP(si):
     cur.execute("select UNITPRICE from PURCHASES where NC="+ si.NC +" ORDER BY PDATE DESC")
     arr=cur.fetchone()   
-    si.UP=arr[0]
+    try:
+
+       si.UP=arr[0]
+    except:
+       print("Error for : "+si.NC)
  
-con = fdb.connect(dsn='C:/Users/dtdav/Desktop/NONGOMA.GDB', user='SYSDBA', password='masterkey')
-#con = fdb.connect(dsn='C:/Users/Dan/Desktop/20180219/NONGOMA.GDB', user='SYSDBA', password='masterkey')
+#con = fdb.connect(dsn='C:/Users/dtdav/Desktop/NONGOMA.GDB', user='SYSDBA', password='masterkey')
+con = fdb.connect(dsn='C:/Users/Dan/Desktop/20180219/NONGOMA.GDB', user='SYSDBA', password='masterkey')
 
 # Create a Cursor object that operates in the context of Connection con:
 cur = con.cursor()
@@ -57,7 +66,12 @@ for i in arr:
     getDisp(si)
     si.SOH=si.STOCKQ-si.DISP
     getUP(si)
+    siList.append(si)
+
 s=set(samesiList)
+
+for x in s:
+    getSame(siList,x)
 
 
 
