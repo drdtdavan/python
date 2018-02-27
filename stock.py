@@ -11,6 +11,9 @@ class StockItem:
         self.NC=""
         self.SOH=0
 
+    def __str__(self):
+        return '__str__ for Car'
+
 def getDisp(item):
     vdate=str(item.STDATE)[0:10]   
     cur.execute("select count(QUANTITY) from medicineregister where NAPPICODE="+item.NC+" and vdate>=CAST('"+vdate+"' AS TIMESTAMP)")
@@ -23,9 +26,10 @@ def getName(item):
     item.MN=arr[0]
 
 def getSame(siL,s):
-    ls=(i for i in siL if i[1]==s)
-    soh=sum(i.SOH for i in ls)   
-    print("TOTAL QUANTITY = "+str(soh)+ " TOTAL PRICE = " +str(soh*ls[0].UP))
+    ls=(i for i in siL if i.SAME==s)
+    soh=sum(i.SOH for i in ls) 
+    up=max(i.UP for i in ls)  
+    print("TOTAL QUANTITY = "+str(soh)+ " TOTAL PRICE = " +str(soh*up))
     for i in ls:
         print(i.MN+"\t"+i.SOH)    
     print("_____________________")
@@ -39,15 +43,16 @@ def getUP(si):
        si.UP=arr[0]
     except:
        print("Error for : "+si.NC)
+       si.UP=0
  
-#con = fdb.connect(dsn='C:/Users/dtdav/Desktop/NONGOMA.GDB', user='SYSDBA', password='masterkey')
-con = fdb.connect(dsn='C:/Users/Dan/Desktop/20180219/NONGOMA.GDB', user='SYSDBA', password='masterkey')
+con = fdb.connect(dsn='C:/Users/dtdav/Desktop/NONGOMA.GDB', user='SYSDBA', password='masterkey')
+#con = fdb.connect(dsn='C:/Users/Dan/Desktop/20180219/NONGOMA.GDB', user='SYSDBA', password='masterkey')
 
 # Create a Cursor object that operates in the context of Connection con:
 cur = con.cursor()
 
 # Execute the SELECT statement:
-cur.execute("select NC,SAME,STDATE,STOCKQ from STOCK ORDER BY SAME")
+cur.execute("select first 10 NC,SAME,STDATE,STOCKQ from STOCK ORDER BY SAME ")
 
 # Retrieve all rows as a sequence and print that sequence:
 arr=cur.fetchall()
@@ -69,7 +74,7 @@ for i in arr:
     siList.append(si)
 
 s=set(samesiList)
-
+s.remove(0)
 for x in s:
     getSame(siList,x)
 
