@@ -1,5 +1,7 @@
 import fdb
 import collections
+from functools import reduce
+GT=0
 class StockItem:
     def __init__(self):
         self.MN=""
@@ -30,14 +32,16 @@ def getName(si):
        
 
 def getSame(siL,s):
-    ls=(i for i in siL if i.SAME==s)
+    global GT
+    ls=[i for i in siL if i.SAME==s]
+    soh=0
     for x in ls:
-        print("getSame"+ x.MN+" "+x.NC+" "+str(x.SAME)+str(x.UP))
-    soh=sum(i.SOH for i in ls) 
-    up=max(for i in ls)  
-    print("getSame TOTAL QUANTITY = "+str(soh)+ " TOTAL PRICE = " +str(soh*up))
-    for i in ls:
-        print(i.MN+"\t"+i.SOH)    
+        soh+=x.STOCKQ
+
+    up=max(ls, key=lambda i: i.UP)
+    total=soh*up.UP
+    GT += total  
+    print(ls[0].MN+" TOTAL QUANTITY = "+str(soh)+" "+ str(up.UP)+" TOTAL PRICE = " +str(total))    
     print("_____________________")
 
     
@@ -52,8 +56,8 @@ def getUP(si):
        print("getUP Error for : "+si.NC)
        si.UP=0
  
-#con = fdb.connect(dsn='C:/Users/dtdav/Desktop/NONGOMA.GDB', user='SYSDBA', password='masterkey')
-con = fdb.connect(dsn='C:/Users/Dan/Desktop/20180219/NONGOMA.GDB', user='SYSDBA', password='masterkey')
+con = fdb.connect(dsn='C:/Users/dtdav/Desktop/NONGOMA.GDB', user='SYSDBA', password='masterkey')
+#con = fdb.connect(dsn='C:/Users/Dan/Desktop/20180219/NONGOMA.GDB', user='SYSDBA', password='masterkey')
 
 # Create a Cursor object that operates in the context of Connection con:
 cur = con.cursor()
@@ -82,6 +86,10 @@ for i in arr:
     siList.append(si)
 
 s=set(samesiList)
+zList=[i for i in siList if i.SAME==0]
+
+for x in zList:
+    
 #s.remove(0)
 for x in s:
     print("x in s -- "+str(x))
