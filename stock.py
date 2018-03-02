@@ -37,10 +37,9 @@ def getSame(siL,s):
     soh=0
     for x in ls:
         soh+=x.STOCKQ
-
     up=max(ls, key=lambda i: i.UP)
     total=soh*up.UP
-    GT += total  
+    GT += total
     print(ls[0].MN+" TOTAL QUANTITY = "+str(soh)+" "+ str(up.UP)+" TOTAL PRICE = " +str(total))    
     print("_____________________")
 
@@ -56,14 +55,14 @@ def getUP(si):
        print("getUP Error for : "+si.NC)
        si.UP=0
  
-con = fdb.connect(dsn='C:/Users/dtdav/Desktop/NONGOMA.GDB', user='SYSDBA', password='masterkey')
-#con = fdb.connect(dsn='C:/Users/Dan/Desktop/20180219/NONGOMA.GDB', user='SYSDBA', password='masterkey')
+#con = fdb.connect(dsn='C:/Users/dtdav/Desktop/NONGOMA.GDB', user='SYSDBA', password='masterkey')
+con = fdb.connect(dsn='C:/Users/Dan/Desktop/20180219/NONGOMA.GDB', user='SYSDBA', password='masterkey')
 
 # Create a Cursor object that operates in the context of Connection con:
 cur = con.cursor()
 
 # Execute the SELECT statement:
-cur.execute("select first 10 NC,SAME,STDATE,STOCKQ from STOCK WHERE SAME!=0 ORDER BY SAME ")
+cur.execute("select first 10 NC,SAME,STDATE,STOCKQ from STOCK WHERE SAME=0 ORDER BY SAME ")
 
 # Retrieve all rows as a sequence and print that sequence:
 arr=cur.fetchall()
@@ -88,7 +87,12 @@ for i in arr:
 s=set(samesiList)
 zList=[i for i in siList if i.SAME==0]
 
-for x in zList:
+for x in zList:        
+    total=x.SOH*x.UP
+    GT += total
+    print(x.MN+" TOTAL QUANTITY = "+str(x.SOH)+" "+ str(x.UP)+" TOTAL PRICE = " +str(total))    
+    print("_____________________")
+
     
 #s.remove(0)
 for x in s:
